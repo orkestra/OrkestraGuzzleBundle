@@ -12,8 +12,6 @@ Installation
 To install OrkestraGuzzleBundle with Composer just add the following to your
 `composer.json` file:
 
-.. code-block :: js
-
     // composer.json
     {
         // ...
@@ -26,15 +24,11 @@ To install OrkestraGuzzleBundle with Composer just add the following to your
 Then, you can install the new dependencies by running Composer's ``update``
 command from the directory where your ``composer.json`` file is located:
 
-.. code-block :: bash
-
     $ php composer.phar update
     
 Composer will automatically download all required files, and install them
 for you. All that is left to do is to update your ``AppKernel.php`` file, and
 register the new bundle:
-
-.. code-block :: php
 
     <?php
 
@@ -48,8 +42,6 @@ register the new bundle:
 Usage
 =====
 To create a service you must create a service file:
-
-.. code-block :: php
 
     <?php
     // ..src/Acme/AcmeBundle/Services/AcmeService.php
@@ -100,7 +92,6 @@ To create a service you must create a service file:
     
 After the service is created you must define it in your `config.yml` file
 
-.. code-block :: yaml
     guzzle:
       services:
         AcmeService:
@@ -111,7 +102,6 @@ After the service is created you must define it in your `config.yml` file
 The params are passed to the constructor as an array and is processed into Guzzle's configuration. Now you can
 use your service with Guzzle!!
 
-.. code-block :: php
     <?php
       //...
       class AcmeController extends Controller
