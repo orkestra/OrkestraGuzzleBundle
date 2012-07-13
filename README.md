@@ -116,4 +116,4 @@ use your service with Guzzle!!
           }
       }
       
-This bundle is work in progress and may have changes that breaks compatitbility.
+This bundle is work in progress and may have changes that break compatitbility.
