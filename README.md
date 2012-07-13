@@ -3,7 +3,7 @@ OrkestraGuzzleBundle
 
 Symfony2 bundle for Guzzle
 
-Installation
+Installation and Usage
 ============
 
 1. Using Composer
