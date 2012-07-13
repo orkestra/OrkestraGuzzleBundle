@@ -1,0 +1,22 @@
+{
+    "name": "orkestra/guzzle-bundle",
+    "type": "symfony-bundle",
+    "description": "Guzzle bundle for Symfony2",
+    "keywords": ["guzzlebundle", "guzzle", "web service"],
+    "homepage": "https://github.com/orkestra/OrkestraGuzzleBundle",
+    "license": "Apache2",
+    "authors": [
+        {
+            "name": "Zach D. Badgett",
+            "email": "zach.badgett@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "guzzle/guzzle": "*"
+    },
+    "autoload": {
+        "psr-0": { "Orkestra\\Bundle\\GuzzleBundle": "" }
+    },
+    "target-dir": "Orkestra/Bundle/GuzzleBundle"
+}

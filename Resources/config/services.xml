@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="guzzle.class">Orkestra\Bundle\GuzzleBundle\Guzzle</parameter>
+        <parameter key="guzzle.service_listener.class">Orkestra\Bundle\GuzzleBundle\EventListener\ServiceListener</parameter>
+        <parameter key="guzzle.annotation.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\AnnotationClassLoader</parameter>
+        <parameter key="guzzle.service.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\ServiceLoader</parameter>
+    </parameters>
+
+    <services>
+        <service id="guzzle_service_listener" class="%guzzle.service_listener.class%">
+            <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest" />
+            <argument>%guzzle.config.services%</argument>
+            <argument type="service" id="guzzle.service.loader" />
+            <argument type="service" id="service_container" />
+        </service>
+
+        <service id="guzzle.annotation.loader" class="%guzzle.annotation.loader.class%">
+            <argument type="service" id="annotation_reader" />
+        </service>
+
+        <service id="guzzle.service.loader" class="%guzzle.service.loader.class%">
+            <argument type="service" id="guzzle.annotation.loader" />
+            <argument type="collection">
+                <argument key="cache_dir">%kernel.cache_dir%</argument>
+                <argument key="debug">%kernel.debug%</argument>
+            </argument>
+        </service>
+
+        <service id="guzzle" class="%guzzle.class%">
+        </service>
+    </services>
+
+</container>
