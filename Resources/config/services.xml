@@ -9,7 +9,7 @@
         <parameter key="guzzle.service_listener.class">Orkestra\Bundle\GuzzleBundle\EventListener\ServiceListener</parameter>
         <parameter key="guzzle.annotation.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\AnnotationClassLoader</parameter>
         <parameter key="guzzle.service.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\ServiceLoader</parameter>
-        <parameter key="guzzle.service.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\ServiceFileLoader</parameter>
+        <parameter key="guzzle.service.file.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\ServiceFileLoader</parameter>
     </parameters>
 
     <services>
