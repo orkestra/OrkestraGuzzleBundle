@@ -1,8 +1,8 @@
 <?php
 
-namespace Orkestra\GuzzleBundle;
+namespace Orkestra\Bundle\GuzzleBundle;
 
-use Orkestra\GuzzleBundle\Services\Service;
+use Orkestra\Bundle\GuzzleBundle\Services\Service;
 
 class Guzzle
 {

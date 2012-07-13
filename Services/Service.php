@@ -1,6 +1,6 @@
 <?php
 
-namespace Orkestra\GuzzleBundle\Services;
+namespace Orkestra\Bundle\GuzzleBundle\Services;
 
 use Guzzle\Common\Collection;
 use Guzzle\Common\Exception\InvalidArgumentException;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Orkestra\GuzzleBundle\Generator\Dumper;
+namespace Orkestra\Bundle\GuzzleBundle\Generator\Dumper;
 
 
 class JsonGeneratorDumper

@@ -1,11 +1,11 @@
 <?php
 
-namespace Orkestra\GuzzleBundle\Loader;
+namespace Orkestra\Bundle\GuzzleBundle\Loader;
 
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;
-use Orkestra\GuzzleBundle\Generator\Dumper\JsonGeneratorDumper;
-use Orkestra\GuzzleBundle\Services\ServiceCollection;
+use Orkestra\Bundle\GuzzleBundle\Generator\Dumper\JsonGeneratorDumper;
+use Orkestra\Bundle\GuzzleBundle\Services\ServiceCollection;
 
 class ServiceLoader
 {
