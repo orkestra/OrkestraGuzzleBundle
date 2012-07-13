@@ -14,15 +14,17 @@ use Doctrine\Common\Annotations\AnnotationException;
 class AnnotationClassLoader implements LoaderInterface
 {
     protected $reader;
+    protected $loader;
 
     /**
      * Constructor.
      *
      * @param Reader $reader
      */
-    public function __construct(Reader $reader)
+    public function __construct(Reader $reader, ServiceFileLoader $loader)
     {
         $this->reader = $reader;
+        $this->loader = $loader;
     }
 
     /**
@@ -51,7 +53,8 @@ class AnnotationClassLoader implements LoaderInterface
             }
         }
 
-        return $commands;
+        $resource = $this->loader->load($class->getFileName());
+        return array($commands, $resource);
     }
 
     /**

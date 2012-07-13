@@ -27,9 +27,9 @@ class ServiceLoader
             $class = $key.'-GuzzleServiceCache';
             $cache = new ConfigCache($this->options['cache_dir'].'/Orkestra_guzzle/'.$class.'.json', false);
             if (!$cache->isFresh($class)) {
-                $content = $this->generateService($service['class'], $service['params']);
+                list($content, $resource) = $this->generateService($service['class'], $service['params']);
                 //TODO: Add file resource
-                $cache->write($content);
+                $cache->write($content, array($resource));
             }
 
             $serviceInstance = new $service['class']($service['params']);
@@ -50,9 +50,9 @@ class ServiceLoader
 
     public function generateService($class, array $params = array())
     {
-        $commands = $this->loader->load($class);
+        list($commands, $resource) = $this->loader->load($class);
         $dumper = new JsonGeneratorDumper();
 
-        return $dumper->dump($commands);
+        return array($dumper->dump($commands), $resource);
     }
 }
