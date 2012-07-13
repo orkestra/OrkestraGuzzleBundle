@@ -43,8 +43,9 @@ $bundles = array(
 );
 ```
 
-Usage
-=====
+2. Usage
+-------------------------------
+
 To create a service you must create a service file:
 
 ```php
