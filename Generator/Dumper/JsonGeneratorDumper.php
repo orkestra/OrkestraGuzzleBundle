@@ -7,9 +7,17 @@ class JsonGeneratorDumper
 {
     public function dump($commands)
     {
-        $dumpArray = array('commands' => array());
+        $dumpArray = array('types' => array(), 'commands' => array());
 
         foreach ($commands as $method => $command) {
+
+            foreach ($command['Type'] as $value) {
+                $name = $value->getName();
+
+                $dumpArray['types'][$name] = array();
+                $dumpArray['types'][$name]['class'] = $value->getClass();
+                $dumpArray['types'][$name]['pattern'] = $value->getPattern();
+            }
 
             foreach ($command['Command'] as $value)
             {
