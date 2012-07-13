@@ -90,7 +90,7 @@ class AcmeService extends BaseService
      */
     public function acmeUserByIdCommand()
     {
-        //Here you can manipulate the response, you can binding it to an object for example
+        //Here you can manipulate the response, you can bind it to an object for example
         return $this->getResponse();
     }
 }
@@ -126,4 +126,4 @@ class AcmeController extends Controller
 }
 ```
 
-This bundle is work in progress and may have changes that break compatitbility.
+This bundle is work in progress and may have changes that break compatibility.
