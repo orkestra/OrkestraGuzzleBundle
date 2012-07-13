@@ -22,6 +22,7 @@
 
         <service id="guzzle.annotation.loader" class="%guzzle.annotation.loader.class%">
             <argument type="service" id="annotation_reader" />
+            <argument type="service" id="guzzle.service.file.loader" />
         </service>
 
         <service id="guzzle.service.loader" class="%guzzle.service.loader.class%">
