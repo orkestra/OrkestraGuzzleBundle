@@ -20,7 +20,7 @@ class ServiceCollection implements \IteratorAggregate, \Countable, \ArrayAccess
     }
 
     /**
-     * Gets the current ServiceCollection as an Iterator that includes all services and child route collections.
+     * Gets the current ServiceCollection as an Iterator that includes all services
      *
      * @return \ArrayIterator An \ArrayIterator interface
      */
@@ -42,10 +42,10 @@ class ServiceCollection implements \IteratorAggregate, \Countable, \ArrayAccess
     /**
      * Adds a service.
      *
-     * @param string $name  The route name
+     * @param string $name  The service name
      * @param Service  $service A Service instance
      *
-     * @throws \InvalidArgumentException When route name contains non valid characters
+     * @throws \InvalidArgumentException When service name contains non valid characters
      *
      * @api
      */
@@ -69,7 +69,7 @@ class ServiceCollection implements \IteratorAggregate, \Countable, \ArrayAccess
     /**
      * Gets a service by name
      *
-     * @param string $name The route name
+     * @param string $name The service name
      *
      * @return Service|null A Service instance or null when not found
      */
@@ -84,7 +84,7 @@ class ServiceCollection implements \IteratorAggregate, \Countable, \ArrayAccess
     /**
      * Removes a service by name
      *
-     * @param string|array $name The route name or an array of route names
+     * @param string|array $name The service name or an array of service names
      */
     public function remove($name)
     {
