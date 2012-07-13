@@ -10,15 +10,15 @@ class JsonGeneratorDumper
         $dumpArray = array('types' => array(), 'commands' => array());
 
         foreach ($commands as $method => $command) {
+            if (isset($command['Type']) {
+                foreach ($command['Type'] as $value) {
+                    $name = $value->getName();
 
-            foreach ($command['Type'] as $value) {
-                $name = $value->getName();
-
-                $dumpArray['types'][$name] = array();
-                $dumpArray['types'][$name]['class'] = $value->getClass();
-                $dumpArray['types'][$name]['pattern'] = $value->getPattern();
+                    $dumpArray['types'][$name] = array();
+                    $dumpArray['types'][$name]['class'] = $value->getClass();
+                    $dumpArray['types'][$name]['pattern'] = $value->getPattern();
+                }
             }
-
             foreach ($command['Command'] as $value)
             {
                 $name = $value->getName();
