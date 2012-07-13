@@ -9,6 +9,7 @@
         <parameter key="guzzle.service_listener.class">Orkestra\Bundle\GuzzleBundle\EventListener\ServiceListener</parameter>
         <parameter key="guzzle.annotation.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\AnnotationClassLoader</parameter>
         <parameter key="guzzle.service.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\ServiceLoader</parameter>
+        <parameter key="guzzle.service.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\ServiceFileLoader</parameter>
     </parameters>
 
     <services>
@@ -29,6 +30,10 @@
                 <argument key="cache_dir">%kernel.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
             </argument>
+        </service>
+
+        <service id="guzzle.service.file.loader" class="%guzzle.service.file.loader.class%">
+            <argument type="service" id="file_locator" />
         </service>
 
         <service id="guzzle" class="%guzzle.class%">
