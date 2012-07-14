@@ -11,8 +11,19 @@ namespace Orkestra\Bundle\GuzzleBundle\Services\Annotation;
  */
 class Param
 {
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var string
+     */
     private $class;
+
+    /**
+     * @var string
+     */
     private $pattern;
 
     /**
@@ -32,31 +43,61 @@ class Param
     }
 
 
+    /**
+     * Set name
+     *
+     * @param $name
+     */
     public function setName($name)
     {
         $this->name = $name;
     }
 
+    /**
+     * Get name
+     *
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * Set class
+     *
+     * @param $class
+     */
     public function setClass($class)
     {
         $this->class = $class;
     }
 
+    /**
+     * Get class
+     *
+     * @return string
+     */
     public function getClass()
     {
         return $this->class;
     }
 
+    /**
+     * Set pattern
+     *
+     * @param $pattern
+     */
     public function setPattern($pattern)
     {
         $this->pattern = $pattern;
     }
 
+    /**
+     * Get pattern
+     *
+     * @return string
+     */
     public function getPattern()
     {
         return $this->pattern;

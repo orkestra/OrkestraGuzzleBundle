@@ -11,9 +11,21 @@ use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Param;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Headers;
 use Doctrine\Common\Annotations\AnnotationException;
 
+/**
+ * Loader class to load annotations from php service files
+ *
+ * @author Zach Badgett <zach.badgett@gmail.com>
+ */
 class AnnotationClassLoader implements LoaderInterface
 {
+    /**
+     * @var \Doctrine\Common\Annotations\Reader
+     */
     protected $reader;
+
+    /**
+     * @var ServiceFileLoader
+     */
     protected $loader;
 
     /**
