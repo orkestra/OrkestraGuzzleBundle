@@ -10,6 +10,7 @@
         <parameter key="guzzle.annotation.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\AnnotationClassLoader</parameter>
         <parameter key="guzzle.service.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\ServiceLoader</parameter>
         <parameter key="guzzle.service.file.loader.class">Orkestra\Bundle\GuzzleBundle\Loader\ServiceFileLoader</parameter>
+        <parameter key="guzzle.service.cache_warmer.class">Orkestra\Bundle\GuzzleBundle\CacheWarmer\ServiceCacheWarmer</parameter>
     </parameters>
 
     <services>
@@ -31,6 +32,12 @@
                 <argument key="cache_dir">%kernel.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
             </argument>
+        </service>
+
+        <service id="guzzle.service.cache_warmer" class="%guzzle.service.cache_warmer.class%" public="false">
+            <tag name="kernel.cache_warmer" />
+            <argument>%guzzle.config.services%</argument>
+            <argument type="service" id="guzzle.service.loader" />
         </service>
 
         <service id="guzzle.service.file.loader" class="%guzzle.service.file.loader.class%">
