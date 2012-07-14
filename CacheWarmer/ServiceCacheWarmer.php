@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Bundle\FrameworkBundle\CacheWarmer;
+namespace Orkestra\Bundle\GuzzleBundle\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmer;
 use Orkestra\Bundle\GuzzleBundle\Loader\ServiceLoader;
