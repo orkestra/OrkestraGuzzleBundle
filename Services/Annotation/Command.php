@@ -11,8 +11,19 @@ namespace Orkestra\Bundle\GuzzleBundle\Services\Annotation;
  */
 class Command
 {
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var string
+     */
     private $method;
+
+    /**
+     * @var string
+     */
     private $uri;
 
     /**
@@ -32,31 +43,61 @@ class Command
     }
 
 
+    /**
+     * Set Name
+     *
+     * @param $name
+     */
     public function setName($name)
     {
         $this->name = $name;
     }
 
+    /**
+     * Get name
+     *
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * Set method
+     *
+     * @param $method
+     */
     public function setMethod($method)
     {
         $this->method = $method;
     }
 
+    /**
+     * Get method
+     *
+     * @return string
+     */
     public function getMethod()
     {
         return $this->method;
     }
 
+    /**
+     * Set uri
+     *
+     * @param $uri
+     */
     public function setUri($uri)
     {
         $this->uri = $uri;
     }
 
+    /**
+     * Get uri
+     *
+     * @return mixed
+     */
     public function getUri()
     {
         return $this->uri;

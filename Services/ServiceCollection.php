@@ -5,14 +5,20 @@ namespace Orkestra\Bundle\GuzzleBundle\Services;
 use Symfony\Component\Config\Resource\ResourceInterface;
 use Orkestra\Bundle\GuzzleBundle\Services\Service;
 
+/**
+ * Service Collection
+ *
+ * @author Zach Badgett <zach.badgett@gmail.com>
+ */
 class ServiceCollection implements \IteratorAggregate, \Countable, \ArrayAccess
 {
+    /**
+     * @var array
+     */
     private $services;
 
     /**
      * Constructor.
-     *
-     * @api
      */
     public function __construct()
     {
@@ -91,6 +97,10 @@ class ServiceCollection implements \IteratorAggregate, \Countable, \ArrayAccess
         unset($this->services[$name]);
     }
 
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     */
     public function offsetSet($offset, $value) {
         if (is_null($offset)) {
             $this->services[] = $value;
@@ -98,12 +108,26 @@ class ServiceCollection implements \IteratorAggregate, \Countable, \ArrayAccess
             $this->services[$offset] = $value;
         }
     }
+
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
     public function offsetExists($offset) {
         return isset($this->services[$offset]);
     }
+
+    /**
+     * @param mixed $offset
+     */
     public function offsetUnset($offset) {
         unset($this->services[$offset]);
     }
+
+    /**
+     * @param mixed $offset
+     * @return mixed|null
+     */
     public function offsetGet($offset) {
         return isset($this->services[$offset]) ? $this->services[$offset] : null;
     }

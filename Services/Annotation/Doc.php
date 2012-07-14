@@ -11,6 +11,9 @@ namespace Orkestra\Bundle\GuzzleBundle\Services\Annotation;
  */
 class Doc
 {
+    /**
+     * @var string
+     */
     private $doc;
 
     /**
@@ -30,16 +33,31 @@ class Doc
     }
 
 
+    /**
+     * Set doc
+     *
+     * @param $doc
+     */
     public function setDoc($doc)
     {
         $this->doc = $doc;
     }
 
+    /**
+     * Get doc
+     *
+     * @return mixed
+     */
     public function getDoc()
     {
         return $this->doc;
     }
 
+    /**
+     * Set doc
+     *
+     * @param $doc
+     */
     public function setValue($doc)
     {
         $this->setDoc($doc);
