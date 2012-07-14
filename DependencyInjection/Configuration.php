@@ -5,6 +5,11 @@ namespace Orkestra\Bundle\GuzzleBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * Guzzle Configuration.
+ *
+ * @author Zach Badgett <zach.badgett@gmail.com>
+ */
 class Configuration implements ConfigurationInterface
 {
     private $debug;
@@ -19,6 +24,11 @@ class Configuration implements ConfigurationInterface
         $this->debug = (Boolean) $debug;
     }
 
+    /**
+     * Create configuration tree.
+     *
+     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder
+     */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();

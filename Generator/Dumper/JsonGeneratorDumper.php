@@ -3,8 +3,19 @@
 namespace Orkestra\Bundle\GuzzleBundle\Generator\Dumper;
 
 
+/**
+ * Json Dumper to dump service into a json file.
+ *
+ * @author Zach Badgett <zach.badgett@gmail.com>
+ */
 class JsonGeneratorDumper
 {
+    /**
+     * Turn commands into JSON
+     *
+     * @param $commands
+     * @return mixed
+     */
     public function dump($commands)
     {
         $dumpArray = array('types' => array(), 'commands' => array());

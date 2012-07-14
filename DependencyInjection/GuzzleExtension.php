@@ -10,8 +10,17 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\Definition\Processor;
 
+/**
+ * Guzzle Extension
+ *
+ * @author Zach Badgett <zach.badgett@gmail.com>
+ */
 class GuzzleExtension extends Extension
 {
+    /**
+     * @param array $configs
+     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $loader = new XmlFileLoader(

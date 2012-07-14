@@ -11,6 +11,9 @@ namespace Orkestra\Bundle\GuzzleBundle\Services\Annotation;
  */
 class Headers
 {
+    /**
+     * @var
+     */
     private $headers;
 
     /**
@@ -30,16 +33,25 @@ class Headers
     }
 
 
+    /**
+     * @param $headers
+     */
     public function setHeaders($headers)
     {
         $this->headers = is_array($headers) ? $headers : array($headers);
     }
 
+    /**
+     * @return mixed
+     */
     public function getHeaders()
     {
         return $this->headers;
     }
 
+    /**
+     * @param $headers
+     */
     public function setValue($headers)
     {
         $this->setHeaders($headers);
