@@ -50,6 +50,11 @@ abstract class Service
     private $response;
 
     /**
+     * @var mixed
+     */
+    private $mapper;
+
+    /**
      * Constructor.
      *
      * @param array $vars
