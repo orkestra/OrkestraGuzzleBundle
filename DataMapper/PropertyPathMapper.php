@@ -22,7 +22,7 @@ class PropertyPathMapper
     public function bind($entity, array $data)
     {
         if (is_object($entity)) {
-            $reflection = newReflectionClass($entity);
+            $reflection = new \ReflectionClass($entity);
 
             foreach ($data as $key => $value) {
                 $setter = 'set'.$this->camelize($key);
