@@ -5,6 +5,7 @@ namespace Orkestra\Bundle\GuzzleBundle\Services;
 use Guzzle\Common\Collection;
 use Guzzle\Common\Exception\InvalidArgumentException;
 use Guzzle\Service\Exception\ValidationException;
+use Orkestra\Bundle\GuzzleBundle\DataMapper\PropertyPathMapper;
 
 /**
  * Service base class
@@ -237,7 +238,16 @@ abstract class Service
 
         return $this->$method();
     }
+	
+    public function bind($object, $data)
+    {
+        if (!$this->mapper) {
+            $this->mapper = new PropertyPathMapper();
+        }
 
+        $this->mapper->bind($object, $data);
+    }
+	
     /**
      * @abstract
      * @return mixed
