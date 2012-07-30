@@ -46,7 +46,22 @@ class ServiceListener
     public function onKernelRequest(GetResponseEvent $event)
     {
         if (!empty($this->services)) {
-            $this->container->get('guzzle')->setServices($this->serviceLoader->load($this->services));
+            $services = array();
+            foreach ($this->services as $key => $service) {
+                $args = array();
+                $args[] = $service['params'];
+
+                if ($service['services']) {
+                    foreach ($service['services'] as $value) {
+                        $args[] = $this->container->get($value['id']);
+                    }
+                }
+
+                $service['args'] = $args;
+                $services[$key] = $service;
+            }
+
+            $this->container->get('guzzle')->setServices($this->serviceLoader->load($services));
         }
     }
 }

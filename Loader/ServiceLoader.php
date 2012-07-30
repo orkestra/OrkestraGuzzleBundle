@@ -56,7 +56,8 @@ class ServiceLoader
                 $cache->write($content, array($resource));
             }
 
-            $serviceInstance = new $service['class']($service['params']);
+            $serviceReflection = new \ReflectionClass($service['class']);
+            $serviceInstance = $serviceReflection->newInstanceArgs($service['args']);
 
             //TODO:Create bridge
             $client = \Guzzle\Service\Client::factory($serviceInstance->getConfig());
