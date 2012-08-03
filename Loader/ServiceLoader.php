@@ -40,37 +40,31 @@ class ServiceLoader
      * Load services and write it to a cache file.
      *
      * @param array $services
-     * @return \Orkestra\Bundle\GuzzleBundle\Services\ServiceCollection
+     * @return \Orkestra\Bundle\GuzzleBundle\Services\Service
      */
-    public function load(array $services)
+    public function load($options)
     {
-        $collection = new ServiceCollection();
+        $class = $options['name'].'-GuzzleServiceCache';
+        $cache = new ConfigCache($this->options['cache_dir'].'/orkestra_guzzle/'.$class.'.json', true);
 
-        foreach ($services as $key => $service) {
-
-            $class = $key.'-GuzzleServiceCache';
-            $cache = new ConfigCache($this->options['cache_dir'].'/orkestra_guzzle/'.$class.'.json', true);
-            if (!$cache->isFresh($class)) {
-                list($content, $resource) = $this->generateService($service['class'], $service['params']);
-                //TODO: Add file resource
-                $cache->write($content, array($resource));
-            }
-
-            $serviceReflection = new \ReflectionClass($service['class']);
-            $serviceInstance = $serviceReflection->newInstanceArgs($service['args']);
-
-            //TODO:Create bridge
-            $client = \Guzzle\Service\Client::factory($serviceInstance->getConfig());
-            $cookiePlugin = new \Guzzle\Http\Plugin\CookiePlugin(new \Guzzle\Http\CookieJar\ArrayCookieJar());
-            $client->addSubscriber($cookiePlugin);
-
-            $serviceInstance->setClient($client);
-            $serviceInstance->setDescription($cache);
-
-            $collection->add($key, $serviceInstance);
+        if (!$cache->isFresh($class)) {
+            list($content, $resource) = $this->generateService($options['class'], $options['params']);
+            //TODO: Add file resource
+            $cache->write($content, array($resource));
         }
 
-        return $collection;
+        //todo cache service instance
+        $serviceReflection = new \ReflectionClass($options['class']);
+        $serviceInstance = $serviceReflection->newInstanceArgs($options['args']);
+
+        $client = \Guzzle\Service\Client::factory($serviceInstance->getConfig());
+        $cookiePlugin = new \Guzzle\Http\Plugin\CookiePlugin(new \Guzzle\Http\CookieJar\ArrayCookieJar());
+        $client->addSubscriber($cookiePlugin);
+
+        $serviceInstance->setClient($client);
+        $serviceInstance->setDescription($cache);
+
+        return $serviceInstance;
     }
 
     /**
