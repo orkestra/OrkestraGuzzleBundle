@@ -33,6 +33,23 @@ class GuzzleExtension extends Extension
         $config = $processor->processConfiguration($configuration, $configs);
 
         $loader->load('services.xml');
-        $container->setParameter('guzzle.config.services', $config['services']);
+
+        $services = array();
+        foreach ($config['services'] as $key => $service) {
+            $args = array();
+            $args[] = $service['params'];
+
+            if ($service['services']) {
+                foreach ($service['services'] as $value) {
+                    $args[] = $container->get($value['id']);
+                }
+            }
+
+            $service['args'] = $args;
+            $service['name'] = $key;
+            $services[$key] = $service;
+        }
+
+        $container->setParameter('guzzle.config.services', $services);
     }
 }
