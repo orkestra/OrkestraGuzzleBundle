@@ -3,6 +3,8 @@
 namespace Orkestra\Bundle\GuzzleBundle;
 
 use Orkestra\Bundle\GuzzleBundle\Services\Service;
+use Orkestra\Bundle\GuzzleBundle\Services\ServiceContainer;
+use Orkestra\Bundle\GuzzleBundle\Loader\ServiceLoader;
 
 /**
  * Class to manage services created.
@@ -14,7 +16,16 @@ class Guzzle
     /**
      * @var array
      */
-    private $services;
+    private $serviceContainer;
+
+    public function __construct($services, ServiceLoader $serviceLoader)
+    {
+        $this->serviceContainer = new ServiceContainer($serviceLoader);
+
+        foreach ($services as $service) {
+            $this->serviceContainer->addService($service);
+        }
+    }
 
     /**
      * Get service
@@ -22,38 +33,8 @@ class Guzzle
      * @param $service
      * @return \Orkestra\Bundle\GuzzleBundle\Services\Service
      */
-    public function get($service)
+    public function getService($service)
     {
-        return $this->services[$service];
-    }
-
-    /**
-     * Get an array of all services
-     *
-     * @return array
-     */
-    public function getServices()
-    {
-        return $this->services;
-    }
-
-    /**
-     * Set services
-     *
-     * @param $services
-     */
-    public function setServices($services)
-    {
-        $this->services = $services;
-    }
-
-    /**
-     * Set a service
-     * @param $name
-     * @param \Orkestra\Bundle\GuzzleBundle\Services\Service $service
-     */
-    public function setService($name, \Orkestra\Bundle\GuzzleBundle\Services\Service $service)
-    {
-        $this->service[$name] = $service;
+        return $this->serviceContainer->getService($service);
     }
 }

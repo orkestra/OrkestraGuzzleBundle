@@ -232,7 +232,7 @@ abstract class Service
      */
     public function execute($commandName, array $params = array())
     {
-        $this->authenticate();
+        $this->beforeExecute();
 
         $this->getClient()->setDefaultHeaders($this->getHeaders());
         $command = $this->getClient()->getCommand($commandName, $params);
@@ -252,10 +252,10 @@ abstract class Service
 
         $this->mapper->bind($object, $data);
     }
-	
+
     /**
      * @abstract
      * @return mixed
      */
-    abstract public function authenticate();
+    abstract public function beforeExecute();
 }
