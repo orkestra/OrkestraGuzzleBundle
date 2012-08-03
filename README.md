@@ -120,9 +120,9 @@ class AcmeController extends Controller
     {
         $guzzle = $this->get('guzzle');
         //Get list of users
-        $users = $guzzle->get('AcmeService')->execute('acme_users');
+        $users = $guzzle->getService('AcmeService')->execute('acme_users');
         //Get a user by id
-        $oneUser = $guzzle->get('AcmeService')->excute('acme_user_id', array('user_id' => 1));
+        $oneUser = $guzzle->getService('AcmeService')->excute('acme_user_id', array('user_id' => 1));
     }
 }
 ```
