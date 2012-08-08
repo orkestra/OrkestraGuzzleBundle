@@ -24,15 +24,18 @@ class ServiceLoader
      */
     private $options = array();
 
+    private $container;
+
     /**
      * Constructor.
      *
      * @param \Symfony\Component\Config\Loader\LoaderInterface $loader
      * @param array $options
      */
-    public function __construct(LoaderInterface $loader, array $options = array())
+    public function __construct(LoaderInterface $loader, \Symfony\Component\DependencyInjection\Container $container, array $options = array())
     {
         $this->options = $options;
+        $this->container = $container;
         $this->loader = $loader;
     }
 
@@ -52,6 +55,17 @@ class ServiceLoader
             //TODO: Add file resource
             $cache->write($content, array($resource));
         }
+
+        $args = array();
+        $args[] = $options['params'];
+
+        if ($options['services']) {
+            foreach ($options['services'] as $value) {
+                $args[] = $this->container->get($value['id']);
+            }
+        }
+
+        $options['args'] = $args;
 
         //todo cache service instance
         $serviceReflection = new \ReflectionClass($options['class']);
