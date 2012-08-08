@@ -35,17 +35,8 @@ class GuzzleExtension extends Extension
         $loader->load('services.xml');
 
         $services = array();
+
         foreach ($config['services'] as $key => $service) {
-            $args = array();
-            $args[] = $service['params'];
-
-            if ($service['services']) {
-                foreach ($service['services'] as $value) {
-                    $args[] = $container->get($value['id']);
-                }
-            }
-
-            $service['args'] = $args;
             $service['name'] = $key;
             $services[$key] = $service;
         }
