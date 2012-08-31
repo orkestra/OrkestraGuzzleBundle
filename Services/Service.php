@@ -5,6 +5,8 @@ namespace Orkestra\Bundle\GuzzleBundle\Services;
 use Guzzle\Common\Collection;
 use Guzzle\Common\Exception\InvalidArgumentException;
 use Guzzle\Service\Exception\ValidationException;
+use Guzzle\Http\Plugin\AsyncPlugin;
+
 use Orkestra\Bundle\GuzzleBundle\DataMapper\PropertyPathMapper;
 
 /**
@@ -234,14 +236,21 @@ abstract class Service
     {
         $this->beforeExecute();
 
-        $this->getClient()->setDefaultHeaders($this->getHeaders());
-        $command = $this->getClient()->getCommand($commandName, $params);
+        $client = $this->getClient();
 
-        $class = $this->description->commands->$commandName->reference;
+        $client->setDefaultHeaders($this->getHeaders());
 
-        $this->response = $this->getClient()->execute($command);
+        $reference = $this->getReference($commandName);
 
-        $parts = explode(':', $class);
+        if ($this->isAsync($commandName)) {
+            $client->addSubscriber(new AsyncPlugin());
+        }
+
+        $command = $client->getCommand($commandName, $params);
+
+        $this->response = $client->execute($command);
+
+        $parts = explode(':', $reference);
 
         if (get_class($this) === $parts[0]) {
             return $this->$parts[1]();
@@ -252,7 +261,18 @@ abstract class Service
 
         return $instance->$parts[1]();
     }
-	
+
+    private function getReference($commandName)
+    {
+        return $this->description->commands->$commandName->reference;
+    }
+
+    private function isAsync($commandName)
+    {
+        return (isset($this->description->commands->$commandName->async))
+            ? $this->description->commands->$commandName->async : false;
+    }
+
     public function bind($object, $data)
     {
         if (!$this->mapper) {
