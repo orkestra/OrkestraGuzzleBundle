@@ -7,6 +7,7 @@ use Guzzle\Common\Exception\InvalidArgumentException;
 use Guzzle\Service\Exception\ValidationException;
 use Guzzle\Service\Command\BatchCommandTransfer;
 use Guzzle\Http\Plugin\AsyncPlugin;
+use Guzzle\Http\Plugin\OauthPlugin;
 
 use Orkestra\Bundle\GuzzleBundle\DataMapper\PropertyPathMapper;
 
@@ -56,6 +57,11 @@ abstract class Service
      * @var mixed
      */
     private $mapper;
+
+    /**
+     * @var mixed
+     */
+    private $oauth = false;
 
     /**
      * Constructor.
@@ -261,6 +267,10 @@ abstract class Service
             $client->addSubscriber(new AsyncPlugin());
         }
 
+        if ($this->oauth != false) {
+            $client->addSubscriber($this->oauth);
+        }
+        
         return $client;
     }
 
@@ -268,6 +278,16 @@ abstract class Service
     {
         return (isset($this->description->commands->$name->async))
             ? $this->description->commands->$name->async : false;
+    }
+
+    public function signedOauthRequest($consumerKey, $consumerSecret, $token, $tokenSecret)
+    {
+        $this->oauth = new OauthPlugin(array(
+            'consumer_key'    => $consumerKey,
+            'consumer_secret' => $consumerSecret,
+            'token'           => $token,
+            'token_secret'    => $tokenSecret
+        ));
     }
 
     public function bind($object, $data)
