@@ -6,6 +6,7 @@ use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Orkestra\Bundle\GuzzleBundle\Generator\Dumper\JsonGeneratorDumper;
 use Orkestra\Bundle\GuzzleBundle\Services\ServiceCollection;
+use Guzzle\Http\Plugin\OauthPlugin;
 
 /**
  * Class to load and cache services
@@ -74,6 +75,11 @@ class ServiceLoader
         $client = \Guzzle\Service\Client::factory($serviceInstance->getConfig());
         $cookiePlugin = new \Guzzle\Http\Plugin\CookiePlugin(new \Guzzle\Http\CookieJar\ArrayCookieJar());
         $client->addSubscriber($cookiePlugin);
+
+        if (isset($options['oauth']) && !empty($options['oauth'])) {
+            $oauthPlugin = new OauthPlugin($options['oauth']);
+            $client->addSubscriber($oauthPlugin);
+        }
 
         $serviceInstance->setClient($client);
         $serviceInstance->setDescription($cache);
