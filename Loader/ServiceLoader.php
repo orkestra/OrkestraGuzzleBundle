@@ -51,9 +51,9 @@ class ServiceLoader
         $cache = new ConfigCache($this->options['cache_dir'].'/orkestra_guzzle/'.$class.'.json', true);
 
         if (!$cache->isFresh($class)) {
-            list($content, $resource) = $this->generateService($options['class'], $options['params']);
+            list($content, $resources) = $this->generateService($options['class'], $options['params']);
             //TODO: Add file resource
-            $cache->write($content, array($resource));
+            $cache->write($content, $resources);
         }
 
         $args = array();

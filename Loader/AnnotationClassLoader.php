@@ -10,6 +10,7 @@ use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Doc;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Param;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Headers;
 use Doctrine\Common\Annotations\AnnotationException;
+use Symfony\Component\Config\Resource\DirectoryResource;
 
 /**
  * Loader class to load annotations from php service files
@@ -51,22 +52,53 @@ class AnnotationClassLoader implements LoaderInterface
             throw new \InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
         }
 
-        $class = new \ReflectionClass($class);
-        $commands = array();
+        $baseClass = new \ReflectionClass($class);
 
-        foreach ($class->getMethods() as $method) {
-            $name = $method->getName();
-            if (preg_match('/Command$/', $name)) {
-                $annotations = $this->reader->getMethodAnnotations($method);
-                foreach ($annotations as $annotation) {
-                    $annotationName = explode('\\', get_class($annotation));
-                    $commands[$name][array_pop($annotationName)][] = $annotation;
+        $commands = array();
+        $commandReflections = array($baseClass);
+
+        $commandDirectory = realpath(dirname($baseClass->getFileName())).'/Command';
+
+        $resources = array($this->loader->load($baseClass->getFileName()));
+
+        if (is_dir($commandDirectory)) {
+            $files = iterator_to_array(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($commandDirectory), \RecursiveIteratorIterator::LEAVES_ONLY));
+            usort($files, function (\SplFileInfo $a, \SplFileInfo $b) {
+                return (string) $a > (string) $b ? 1 : -1;
+            });
+
+            foreach ($files as $file) {
+                if (!$file->isFile() || '.php' !== substr($file->getFilename(), -4)) {
+                    continue;
+                }
+
+                if ($class = $this->findClass($file)) {
+                    $refl = new \ReflectionClass($class);
+                    if ($refl->isAbstract()) {
+                        continue;
+                    }
+
+                    $resources[] = $this->loader->load($refl->getFileName());
+                    $commandReflections[] = $refl;
                 }
             }
         }
 
-        $resource = $this->loader->load($class->getFileName());
-        return array($commands, $resource);
+        foreach ($commandReflections as $class) {
+            foreach ($class->getMethods() as $method) {
+                $methodName = $method->getName();
+                $name = $class->getName().':'.$methodName;
+                if (preg_match('/Command$/', $methodName)) {
+                    $annotations = $this->reader->getMethodAnnotations($method);
+                    foreach ($annotations as $annotation) {
+                        $annotationName = explode('\\', get_class($annotation));
+                        $commands[$name][array_pop($annotationName)][] = $annotation;
+                    }
+                }
+            }
+        }
+
+        return array($commands, $resources);
     }
 
     /**
@@ -98,5 +130,48 @@ class AnnotationClassLoader implements LoaderInterface
      */
     public function setResolver(LoaderResolverInterface $resolver)
     {
+    }
+
+    /**
+     * Returns the full class name for the first class in the file.
+     *
+     * @param string $file A PHP file path
+     *
+     * @return string|false Full class name if found, false otherwise
+     */
+    protected function findClass($file)
+    {
+        $class = false;
+        $namespace = false;
+        $tokens = token_get_all(file_get_contents($file));
+        for ($i = 0, $count = count($tokens); $i < $count; $i++) {
+            $token = $tokens[$i];
+
+            if (!is_array($token)) {
+                continue;
+            }
+
+            if (true === $class && T_STRING === $token[0]) {
+                return $namespace.'\\'.$token[1];
+            }
+
+            if (true === $namespace && T_STRING === $token[0]) {
+                $namespace = '';
+                do {
+                    $namespace .= $token[1];
+                    $token = $tokens[++$i];
+                } while ($i < $count && is_array($token) && in_array($token[0], array(T_NS_SEPARATOR, T_STRING)));
+            }
+
+            if (T_CLASS === $token[0]) {
+                $class = true;
+            }
+
+            if (T_NAMESPACE === $token[0]) {
+                $namespace = true;
+            }
+        }
+
+        return false;
     }
 }
