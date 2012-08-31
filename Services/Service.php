@@ -237,11 +237,20 @@ abstract class Service
         $this->getClient()->setDefaultHeaders($this->getHeaders());
         $command = $this->getClient()->getCommand($commandName, $params);
 
-        $method = $this->description->commands->$commandName->methodName;
+        $class = $this->description->commands->$commandName->reference;
 
         $this->response = $this->getClient()->execute($command);
 
-        return $this->$method();
+        $parts = explode(':', $class);
+
+        if (get_class($this) === $parts[0]) {
+            return $this->$parts[1]();
+        }
+
+        $refl = new \ReflectionClass($parts[0]);
+        $instance = $refl->newInstance();
+
+        return $instance->$parts[1]();
     }
 	
     public function bind($object, $data)
