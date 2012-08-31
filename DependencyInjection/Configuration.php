@@ -40,6 +40,7 @@ class Configuration implements ConfigurationInterface
                         ->prototype('array')
                             ->children()
                                 ->scalarNode('class')->end()
+                                ->booleanNode('logging')->defaultValue(false)->end()
                                 ->arrayNode('oauth')
                                     ->useAttributeAsKey('key')
                                     ->prototype('scalar')->end()
