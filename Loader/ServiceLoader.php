@@ -7,6 +7,8 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Orkestra\Bundle\GuzzleBundle\Generator\Dumper\JsonGeneratorDumper;
 use Orkestra\Bundle\GuzzleBundle\Services\ServiceCollection;
 use Guzzle\Http\Plugin\OauthPlugin;
+use Guzzle\Http\Plugin\LogPlugin;
+use Guzzle\Common\Log\MonologLogAdapter;
 
 /**
  * Class to load and cache services
@@ -79,6 +81,12 @@ class ServiceLoader
         if (isset($options['oauth']) && !empty($options['oauth'])) {
             $oauthPlugin = new OauthPlugin($options['oauth']);
             $client->addSubscriber($oauthPlugin);
+        }
+
+        if ($options['logging']) {
+            //Container seems pretty expensive, we may just pass the logger through the constructor
+            $logPlugin = new LogPlugin(new MonologLogAdapter($this->container->get('logger')));
+            $client->addSubscriber($logPlugin);
         }
 
         $serviceInstance->setClient($client);
