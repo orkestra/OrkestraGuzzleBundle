@@ -5,6 +5,7 @@ namespace Orkestra\Bundle\GuzzleBundle\Services;
 use Guzzle\Common\Collection;
 use Guzzle\Common\Exception\InvalidArgumentException;
 use Guzzle\Service\Exception\ValidationException;
+use Guzzle\Service\Command\BatchCommandTransfer;
 use Guzzle\Http\Plugin\AsyncPlugin;
 
 use Orkestra\Bundle\GuzzleBundle\DataMapper\PropertyPathMapper;
@@ -232,23 +233,57 @@ abstract class Service
      * @param array $params
      * @return mixed
      */
-    public function execute($commandName, array $params = array())
+    public function execute($name, array $params = array())
     {
         $this->beforeExecute();
 
+        $client = $this->getCommandClient($name);
+
+        $command = $client->getCommand($name, $params);
+
+        $response = $client->execute($command);
+
+        return $this->executeResponse($name, $response);
+    }
+
+    private function getReference($name)
+    {
+        return $this->description->commands->$name->reference;
+    }
+
+    private function getCommandClient($name)
+    {
         $client = $this->getClient();
 
         $client->setDefaultHeaders($this->getHeaders());
 
-        $reference = $this->getReference($commandName);
-
-        if ($this->isAsync($commandName)) {
+        if ($this->isAsync($name)) {
             $client->addSubscriber(new AsyncPlugin());
         }
 
-        $command = $client->getCommand($commandName, $params);
+        return $client;
+    }
 
-        $this->response = $client->execute($command);
+    private function isAsync($name)
+    {
+        return (isset($this->description->commands->$name->async))
+            ? $this->description->commands->$name->async : false;
+    }
+
+    public function bind($object, $data)
+    {
+        if (!$this->mapper) {
+            $this->mapper = new PropertyPathMapper();
+        }
+
+        $this->mapper->bind($object, $data);
+    }
+
+    public function executeResponse($name, $response)
+    {
+        $this->response = $response;
+
+        $reference = $this->getReference($name);
 
         $parts = explode(':', $reference);
 
@@ -262,24 +297,42 @@ abstract class Service
         return $instance->$parts[1]();
     }
 
-    private function getReference($commandName)
+    public function batch(array $batch = array(), $size = 50)
     {
-        return $this->description->commands->$commandName->reference;
-    }
+        $queue = new \SplQueue();
+        $client = $this->getClient();
+        $responses = array();
 
-    private function isAsync($commandName)
-    {
-        return (isset($this->description->commands->$commandName->async))
-            ? $this->description->commands->$commandName->async : false;
-    }
+        $client->getEventDispatcher()->addListener('command.after_send', function($a) use (&$responses) {
+            $responses[][$a['command']->getName()] = $a['command']->getResult();
+        });
 
-    public function bind($object, $data)
-    {
-        if (!$this->mapper) {
-            $this->mapper = new PropertyPathMapper();
+        $this->beforeExecute();
+
+        foreach ($batch as $command) {
+
+            if (!isset($command[1])) {
+                $command[1] = array();
+            }
+
+            $c = $this->getCommandClient($command[0])->getCommand($command[0], $command[1]);
+            $queue[] = $c;
         }
 
-        $this->mapper->bind($object, $data);
+        $batchTransfer = new BatchCommandTransfer($size);
+        $batches = $batchTransfer->createBatches($queue);
+
+        foreach ($batches as $b) {
+            $batchTransfer->transfer($b);
+        }
+
+        $results = array();
+
+        foreach ($responses as $response) {
+            $results[] = $this->executeResponse(key($response), $response[key($response)]);
+        }
+
+        return $results;
     }
 
     /**
