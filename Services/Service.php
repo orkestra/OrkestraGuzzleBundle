@@ -9,6 +9,7 @@ use Guzzle\Http\Plugin\AsyncPlugin;
 use Guzzle\Http\Plugin\OauthPlugin;
 use Orkestra\Bundle\GuzzleBundle\Plugin\WsseAuthPlugin;
 use Orkestra\Bundle\GuzzleBundle\DataMapper\PropertyPathMapper;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Service base class
@@ -68,6 +69,11 @@ abstract class Service
     private $wsse = false;
 
     /**
+     * @var \Symfony\Component\EventDispatcher\EventDispatcher
+     */
+    private $eventDispatcher;
+
+    /**
      * Constructor.
      *
      * @param array $vars
@@ -75,6 +81,7 @@ abstract class Service
     public function __construct(array $vars = array())
     {
         $this->config = $this->prepareConfig($this->vars, $vars);
+        $this->eventDispatcher = new EventDispatcher();
     }
 
     /**
@@ -212,6 +219,37 @@ abstract class Service
         $this->description = json_decode(file_get_contents($description));
     }
 
+    public function setMetadata($metadata)
+    {
+        $this->metadata = unserialize(file_get_contents($metadata));
+    }
+
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    public function bindEvents()
+    {
+        $events = $this->metadata->getEvents();
+        if ($this->metadata instanceof ServiceMetadata && !empty($events)) {
+            foreach ($events as $event => $callbacks) {
+                foreach ($callbacks as $reference) {
+                    $parts = explode(':', $reference);
+
+                    if (get_class($this) === $parts[0]) {
+                        $instance = $this;
+                    } else {
+                        $refl = new \ReflectionClass($parts[0]);
+                        $instance = $refl->newInstance();
+                    }
+
+                    $this->eventDispatcher->addListener($event, array($instance, $parts[1]));
+                }
+            }
+        }
+    }
+
     /**
      * Method for creating authorization headers that may
      * have variables that were computed
@@ -245,7 +283,7 @@ abstract class Service
      */
     public function execute($name, array $params = array())
     {
-        $this->beforeExecute();
+        $this->eventDispatcher->dispatch('BeforeSend');
 
         $client = $this->getCommandClient($name);
 
@@ -340,7 +378,7 @@ abstract class Service
             $responses[][$a['command']->getName()] = $a['command']->getResult();
         });
 
-        $this->beforeExecute();
+        $this->eventDispatcher->dispatch('BeforeSend');
 
         foreach ($batch as $command) {
 
@@ -367,10 +405,4 @@ abstract class Service
 
         return $results;
     }
-
-    /**
-     * @abstract
-     * @return mixed
-     */
-    abstract public function beforeExecute();
 }
