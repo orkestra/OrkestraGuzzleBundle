@@ -32,7 +32,6 @@ class Headers
         }
     }
 
-
     /**
      * @param $headers
      */

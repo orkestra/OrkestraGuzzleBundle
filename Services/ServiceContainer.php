@@ -21,7 +21,8 @@ class ServiceContainer
         $this->services[$options['name']] = $options;
     }
 
-    public function getService($name) {
+    public function getService($name)
+    {
         if (isset($this->collection[$name])) {
             return $this->collection[$name];
         }

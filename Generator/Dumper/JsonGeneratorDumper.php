@@ -2,7 +2,6 @@
 
 namespace Orkestra\Bundle\GuzzleBundle\Generator\Dumper;
 
-
 /**
  * Json Dumper to dump service into a json file.
  *
@@ -30,8 +29,7 @@ class JsonGeneratorDumper
                     $dumpArray['types'][$name]['pattern'] = $value->getPattern();
                 }
             }
-            foreach ($command['Command'] as $value)
-            {
+            foreach ($command['Command'] as $value) {
                 $name = $value->getName();
 
                 $dumpArray['commands'][$name] = array();

@@ -29,8 +29,8 @@ class ServiceListener
     private $container;
 
     /**
-     * @param array $services
-     * @param ServiceLoader $serviceLoader
+     * @param array                                                     $services
+     * @param ServiceLoader                                             $serviceLoader
      * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
      */
     public function __construct(array $services, ServiceLoader $serviceLoader, ContainerInterface $container)

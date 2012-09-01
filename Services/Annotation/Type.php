@@ -9,7 +9,7 @@ namespace Orkestra\Bundle\GuzzleBundle\Services\Annotation;
  *
  * @author Zach Badgett <zach.badgett@gmail.com>
  */
-class Param
+class Type
 {
     /**
      * @var string
@@ -41,7 +41,6 @@ class Param
             $this->$method($value);
         }
     }
-
 
     /**
      * Set name

@@ -6,7 +6,6 @@ use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Orkestra\Bundle\GuzzleBundle\Generator\Dumper\JsonGeneratorDumper;
-use Orkestra\Bundle\GuzzleBundle\Services\ServiceCollection;
 use Guzzle\Http\Plugin\OauthPlugin;
 use Guzzle\Http\Plugin\LogPlugin;
 use Guzzle\Common\Log\MonologLogAdapter;
@@ -36,7 +35,7 @@ class ServiceLoader
      * Constructor.
      *
      * @param \Symfony\Component\Config\Loader\LoaderInterface $loader
-     * @param array $options
+     * @param array                                            $options
      */
     public function __construct(LoaderInterface $loader, Container $container, array $options = array())
     {
@@ -48,7 +47,7 @@ class ServiceLoader
     /**
      * Load services and write it to a cache file.
      *
-     * @param array $services
+     * @param  array                                          $services
      * @return \Orkestra\Bundle\GuzzleBundle\Services\Service
      */
     public function load($options)
@@ -107,7 +106,7 @@ class ServiceLoader
      * Load service's annotations and return a json string
      *
      * @param $class
-     * @param array $params
+     * @param  array $params
      * @return array
      */
     public function generateService($class, array $params = array())
