@@ -53,28 +53,15 @@ To create a service you must create a service file:
 // ..src/Acme/AcmeBundle/Services/AcmeService.php
 namespace Acme\AcmeBundle\Services;
 
-use Orkestra\Bundle\GuzzleBundle\Services\Service as BaseService;
+use Orkestra\Bundle\GuzzleBundle\Services\Service as AbstractService;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Command;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Doc;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Param;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Headers;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Type;
 
-class AcmeService extends BaseService
+class AcmeService extends AbstractService
 {
-    protected $vars;
-
-    public function __construct(array $vars = array())
-    {
-        $this->vars = array_merge($this->vars, $vars);
-        parent::__construct($this->vars);
-    }
-
-    public function authenticate()
-    {
-        //Use this function to create hashes and set headers for authenication
-    }
-
     /**
      * @Command(name="acme_users", method="GET", uri="/users")
      * @Doc("Get list of Acme users")
