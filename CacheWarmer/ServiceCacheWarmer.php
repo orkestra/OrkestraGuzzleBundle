@@ -18,7 +18,7 @@ class ServiceCacheWarmer extends CacheWarmer
     /**
      * Constructor.
      *
-     * @param array $services
+     * @param array         $services
      * @param ServiceLoader $serviceLoader
      */
     public function __construct(array $services, ServiceLoader $serviceLoader)

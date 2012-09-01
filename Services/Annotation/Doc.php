@@ -32,7 +32,6 @@ class Doc
         }
     }
 
-
     /**
      * Set doc
      *

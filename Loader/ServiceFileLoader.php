@@ -4,7 +4,6 @@ namespace Orkestra\Bundle\GuzzleBundle\Loader;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Config\Loader\FileLoader;
 
-
 /**
  * ServiceFileLoader
  *
@@ -16,7 +15,7 @@ class ServiceFileLoader extends FileLoader
      * Find the service file
      *
      * @param $file
-     * @param null $type
+     * @param  null                                            $type
      * @return \Symfony\Component\Config\Resource\FileResource
      */
     public function load($file, $type = null)
@@ -31,7 +30,7 @@ class ServiceFileLoader extends FileLoader
      * Support only php files
      *
      * @param $resource
-     * @param null $type
+     * @param  null $type
      * @return bool
      */
     public function supports($resource, $type = null)
