@@ -36,6 +36,10 @@ class JsonGeneratorDumper
 
                 $dumpArray['commands'][$name] = array();
 
+                if (isset($command['Async'])) {
+                    $dumpArray['commands'][$name]['async'] = true;
+                }
+
                 $dumpArray['commands'][$name]['reference'] = $class;
 
                 $dumpArray['commands'][$name]['uri'] = $value->getUri();

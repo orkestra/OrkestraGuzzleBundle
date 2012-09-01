@@ -4,11 +4,14 @@ namespace Orkestra\Bundle\GuzzleBundle\Loader;
 
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\Container;
 use Orkestra\Bundle\GuzzleBundle\Generator\Dumper\JsonGeneratorDumper;
 use Orkestra\Bundle\GuzzleBundle\Services\ServiceCollection;
 use Guzzle\Http\Plugin\OauthPlugin;
 use Guzzle\Http\Plugin\LogPlugin;
 use Guzzle\Common\Log\MonologLogAdapter;
+use Guzzle\Service\Client;
+use Orkestra\Bundle\GuzzleBundle\Plugin\WsseAuthPlugin;
 
 /**
  * Class to load and cache services
@@ -35,7 +38,7 @@ class ServiceLoader
      * @param \Symfony\Component\Config\Loader\LoaderInterface $loader
      * @param array $options
      */
-    public function __construct(LoaderInterface $loader, \Symfony\Component\DependencyInjection\Container $container, array $options = array())
+    public function __construct(LoaderInterface $loader, Container $container, array $options = array())
     {
         $this->options = $options;
         $this->container = $container;
@@ -74,13 +77,18 @@ class ServiceLoader
         $serviceReflection = new \ReflectionClass($options['class']);
         $serviceInstance = $serviceReflection->newInstanceArgs($options['args']);
 
-        $client = \Guzzle\Service\Client::factory($serviceInstance->getConfig());
+        $client = Client::factory($serviceInstance->getConfig());
         $cookiePlugin = new \Guzzle\Http\Plugin\CookiePlugin(new \Guzzle\Http\CookieJar\ArrayCookieJar());
         $client->addSubscriber($cookiePlugin);
 
         if (isset($options['oauth']) && !empty($options['oauth'])) {
             $oauthPlugin = new OauthPlugin($options['oauth']);
             $client->addSubscriber($oauthPlugin);
+        }
+
+        if (isset($options['wsse']) && !empty($options['wsse'])) {
+            $wssePlugin = new WsseAuthPlugin($options['wsse']['username'], $options['wsse']['password']);
+            $client->addSubscriber($wssePlugin);
         }
 
         if ($options['logging']) {
