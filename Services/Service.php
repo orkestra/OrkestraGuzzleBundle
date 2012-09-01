@@ -8,7 +8,7 @@ use Guzzle\Service\Exception\ValidationException;
 use Guzzle\Service\Command\BatchCommandTransfer;
 use Guzzle\Http\Plugin\AsyncPlugin;
 use Guzzle\Http\Plugin\OauthPlugin;
-
+use Orkestra\Bundle\GuzzleBundle\Plugin\WsseAuthPlugin;
 use Orkestra\Bundle\GuzzleBundle\DataMapper\PropertyPathMapper;
 
 /**
@@ -62,6 +62,11 @@ abstract class Service
      * @var mixed
      */
     private $oauth = false;
+
+    /**
+     * @var mixed
+     */
+    private $wsse = false;
 
     /**
      * Constructor.
@@ -201,6 +206,7 @@ abstract class Service
         if (!$this->getClient()) {
             throw new \Exception('Client must be configured before setting description.');
         }
+
         $clientDescription = \Guzzle\Service\Description\ServiceDescription::factory($description);
         $this->getClient()->setDescription($clientDescription);
         //TODO: Add better deserializer
@@ -270,7 +276,11 @@ abstract class Service
         if ($this->oauth != false) {
             $client->addSubscriber($this->oauth);
         }
-        
+
+        if ($this->wsse != false) {
+            $client->addSubscriber($this->wsse);
+        }
+
         return $client;
     }
 
@@ -288,6 +298,11 @@ abstract class Service
             'token'           => $token,
             'token_secret'    => $tokenSecret
         ));
+    }
+
+    public function wsseRequest($username, $password, $digester = null, $noncer = null)
+    {
+        $this->wsse = new WsseAuthPlugin($username, $password, $digester = null, $noncer = null);
     }
 
     public function bind($object, $data)
