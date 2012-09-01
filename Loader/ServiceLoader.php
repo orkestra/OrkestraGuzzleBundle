@@ -54,11 +54,15 @@ class ServiceLoader
     {
         $class = $options['name'].'-GuzzleServiceCache';
         $cache = new ConfigCache($this->options['cache_dir'].'/orkestra_guzzle/'.$class.'.json', true);
+        $metaCache = new ConfigCache($this->options['cache_dir'].'/orkestra_guzzle/'.$class.'-Metadata.php', true);
 
         if (!$cache->isFresh($class)) {
-            list($content, $resources) = $this->generateService($options['class'], $options['params']);
+            list($content, $resources, $serviceMeta) = $this->generateService($options['class'], $options['params']);
             //TODO: Add file resource
             $cache->write($content, $resources);
+
+            //todo options for meta cache
+            $metaCache->write(serialize($serviceMeta), $resources);
         }
 
         $args = array();
@@ -77,6 +81,7 @@ class ServiceLoader
         $serviceInstance = $serviceReflection->newInstanceArgs($options['args']);
 
         $client = Client::factory($serviceInstance->getConfig());
+
         $cookiePlugin = new \Guzzle\Http\Plugin\CookiePlugin(new \Guzzle\Http\CookieJar\ArrayCookieJar());
         $client->addSubscriber($cookiePlugin);
 
@@ -98,7 +103,8 @@ class ServiceLoader
 
         $serviceInstance->setClient($client);
         $serviceInstance->setDescription($cache);
-
+        $serviceInstance->setMetadata($metaCache);
+        $serviceInstance->bindEvents();
         return $serviceInstance;
     }
 
@@ -111,9 +117,9 @@ class ServiceLoader
      */
     public function generateService($class, array $params = array())
     {
-        list($commands, $resource) = $this->loader->load($class);
+        list($commands, $resource, $serviceMeta) = $this->loader->load($class);
         $dumper = new JsonGeneratorDumper();
 
-        return array($dumper->dump($commands), $resource);
+        return array($dumper->dump($commands), $resource, $serviceMeta);
     }
 }
