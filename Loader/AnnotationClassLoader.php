@@ -7,6 +7,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Command;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Param;
+use Orkestra\Bundle\GuzzleBundle\Services\ServiceMetadata;
 
 /**
  * Loader class to load annotations from php service files
@@ -25,6 +26,9 @@ class AnnotationClassLoader implements LoaderInterface
      */
     protected $loader;
 
+    private $events = array(
+        'BeforeSend'
+    );
     /**
      * Constructor.
      *
@@ -48,6 +52,7 @@ class AnnotationClassLoader implements LoaderInterface
             throw new \InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
         }
 
+
         $baseClass = new \ReflectionClass($class);
 
         $commands = array();
@@ -56,6 +61,8 @@ class AnnotationClassLoader implements LoaderInterface
         $commandDirectory = realpath(dirname($baseClass->getFileName())).'/Command';
 
         $resources = array($this->loader->load($baseClass->getFileName()));
+
+        $serviceMeta = new ServiceMetadata($baseClass->getName());
 
         if (is_dir($commandDirectory)) {
             $files = iterator_to_array(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($commandDirectory), \RecursiveIteratorIterator::LEAVES_ONLY));
@@ -84,17 +91,24 @@ class AnnotationClassLoader implements LoaderInterface
             foreach ($class->getMethods() as $method) {
                 $methodName = $method->getName();
                 $name = $class->getName().':'.$methodName;
-                if (preg_match('/Command$/', $methodName)) {
-                    $annotations = $this->reader->getMethodAnnotations($method);
-                    foreach ($annotations as $annotation) {
-                        $annotationName = explode('\\', get_class($annotation));
-                        $commands[$name][array_pop($annotationName)][] = $annotation;
+                $annotations = $this->reader->getMethodAnnotations($method);
+                foreach ($annotations as $annotation) {
+                    $annotationName = explode('\\', get_class($annotation));
+                    $annotationName = array_pop($annotationName);
+                    if (in_array($annotationName, $this->events))
+                    {
+                        $serviceMeta->addEvent($name, $annotationName);
+                        continue;
+                    }
+
+                    if (preg_match('/Command$/', $methodName)) {
+                        $commands[$name][$annotationName][] = $annotation;
                     }
                 }
             }
         }
 
-        return array($commands, $resources);
+        return array($commands, $resources, $serviceMeta);
     }
 
     /**
