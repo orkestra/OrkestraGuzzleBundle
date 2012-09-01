@@ -15,57 +15,57 @@ class Param
      * @var string
      */
     private $name;
-    
+
     /**
      * @var string
      */
     private $type;
-    
+
     /**
      * @var bool
      */
     private $required = false;
-    
+
     /**
      * @var string
      */
     private $location;
-    
+
     /**
      * @var string
      */
     private $default;
-    
+
     /**
      * @var string
      */
     private $doc;
-    
+
     /**
      * @var string
      */
     private $minLength;
-    
+
     /**
      * @var string
      */
     private $maxLength;
-    
+
     /**
      * @var string
      */
     private $static;
-    
+
     /**
      * @var string
      */
     private $prepend;
-    
+
     /**
      * @var string
      */
     private $append;
-    
+
     /**
      * @var string
      */
@@ -86,7 +86,6 @@ class Param
             $this->$method($value);
         }
     }
-
 
     /**
      * Set name

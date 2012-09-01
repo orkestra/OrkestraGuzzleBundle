@@ -3,7 +3,6 @@
 namespace Orkestra\Bundle\GuzzleBundle\Services;
 
 use Guzzle\Common\Collection;
-use Guzzle\Common\Exception\InvalidArgumentException;
 use Guzzle\Service\Exception\ValidationException;
 use Guzzle\Service\Command\BatchCommandTransfer;
 use Guzzle\Http\Plugin\AsyncPlugin;
@@ -81,9 +80,9 @@ abstract class Service
     /**
      * Prepare the config for Guzzle's client
      *
-     * @param array|null $config
-     * @param array|null $defaults
-     * @param array|null $required
+     * @param  array|null                                    $config
+     * @param  array|null                                    $defaults
+     * @param  array|null                                    $required
      * @return \Guzzle\Common\Collection
      * @throws \Guzzle\Service\Exception\ValidationException
      */
@@ -230,8 +229,7 @@ abstract class Service
             }
         }
 
-        if (preg_match('/{.*}/', $string, $matches))
-        {
+        if (preg_match('/{.*}/', $string, $matches)) {
             throw new \Exception('These values are required: '.implode(', ', $matches));
         }
 
@@ -242,7 +240,7 @@ abstract class Service
      * Execute commands
      *
      * @param $commandName
-     * @param array $params
+     * @param  array $params
      * @return mixed
      */
     public function execute($name, array $params = array())

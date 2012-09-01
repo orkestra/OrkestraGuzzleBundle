@@ -2,7 +2,6 @@
 
 namespace Orkestra\Bundle\GuzzleBundle\Services;
 
-use Symfony\Component\Config\Resource\ResourceInterface;
 use Orkestra\Bundle\GuzzleBundle\Services\Service;
 
 /**
@@ -48,8 +47,8 @@ class ServiceCollection implements \IteratorAggregate, \Countable, \ArrayAccess
     /**
      * Adds a service.
      *
-     * @param string $name  The service name
-     * @param Service  $service A Service instance
+     * @param string  $name    The service name
+     * @param Service $service A Service instance
      *
      * @throws \InvalidArgumentException When service name contains non valid characters
      *
@@ -84,6 +83,7 @@ class ServiceCollection implements \IteratorAggregate, \Countable, \ArrayAccess
         if (isset($this->services[$name])) {
             return $this->services[$name];
         }
+
         return null;
     }
 
@@ -101,7 +101,8 @@ class ServiceCollection implements \IteratorAggregate, \Countable, \ArrayAccess
      * @param mixed $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         if (is_null($offset)) {
             $this->services[] = $value;
         } else {
@@ -110,25 +111,28 @@ class ServiceCollection implements \IteratorAggregate, \Countable, \ArrayAccess
     }
 
     /**
-     * @param mixed $offset
+     * @param  mixed $offset
      * @return bool
      */
-    public function offsetExists($offset) {
+    public function offsetExists($offset)
+    {
         return isset($this->services[$offset]);
     }
 
     /**
      * @param mixed $offset
      */
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         unset($this->services[$offset]);
     }
 
     /**
-     * @param mixed $offset
+     * @param  mixed      $offset
      * @return mixed|null
      */
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         return isset($this->services[$offset]) ? $this->services[$offset] : null;
     }
 }

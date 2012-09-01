@@ -14,8 +14,8 @@ class PropertyPathMapper
     private $errors = array();
 
     /**
-     * @param Object $entity Entity to bind data
-     * @param array $data Array of data to bind to object
+     * @param  Object    $entity Entity to bind data
+     * @param  array     $data   Array of data to bind to object
      * @return boolean
      * @throws Exception
      */
@@ -42,7 +42,7 @@ class PropertyPathMapper
     /**
      * Camelizes a given string.
      *
-     * @param  string $string Some string.
+     * @param string $string Some string.
      *
      * @return string The camelized version of the string.
      */

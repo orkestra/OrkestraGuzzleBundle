@@ -42,7 +42,6 @@ class Command
         }
     }
 
-
     /**
      * Set Name
      *

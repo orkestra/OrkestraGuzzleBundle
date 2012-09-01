@@ -6,11 +6,7 @@ use Doctrine\Common\Annotations\Reader;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Command;
-use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Doc;
 use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Param;
-use Orkestra\Bundle\GuzzleBundle\Services\Annotation\Headers;
-use Doctrine\Common\Annotations\AnnotationException;
-use Symfony\Component\Config\Resource\DirectoryResource;
 
 /**
  * Loader class to load annotations from php service files
@@ -44,7 +40,7 @@ class AnnotationClassLoader implements LoaderInterface
      * Loads a resource.
      *
      * @param mixed  $class A class name
-     * @param string $type     The resource type
+     * @param string $type  The resource type
      */
     public function load($class, $type = null)
     {
