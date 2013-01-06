@@ -57,10 +57,10 @@ class WsseAuthPlugin implements EventSubscriberInterface
     /**
      * Constructor
      *
-     * @param string   $username  The username
-     * @param string   $password  The password
-     * @param Callable $digester  Optional closure to create digest
-     * @param Callable $noncer    Optional closure to create nonce
+     * @param string   $username The username
+     * @param string   $password The password
+     * @param Callable $digester Optional closure to create digest
+     * @param Callable $noncer   Optional closure to create nonce
      */
     public function __construct($username, $password, $digester = null, $noncer = null)
     {
@@ -84,7 +84,6 @@ class WsseAuthPlugin implements EventSubscriberInterface
             $this->noncer = $noncer;
         }
     }
-
 
     /**
      * {@inheritdoc}
@@ -132,6 +131,5 @@ class WsseAuthPlugin implements EventSubscriberInterface
     {
         return hash('sha512', uniqid(true));
     }
-
 
 }

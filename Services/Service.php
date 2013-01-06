@@ -3,13 +3,13 @@
 namespace Orkestra\Bundle\GuzzleBundle\Services;
 
 use Guzzle\Common\Collection;
-use Guzzle\Common\Exception\InvalidArgumentException;
 use Guzzle\Service\Exception\ValidationException;
-use Guzzle\Service\Command\BatchCommandTransfer;
-use Guzzle\Http\Plugin\AsyncPlugin;
-use Guzzle\Http\Plugin\OauthPlugin;
+use Guzzle\Batch\BatchCommandTransfer;
+use Guzzle\Plugin\Async\AsyncPlugin;
+use Guzzle\Plugin\Oauth\OauthPlugin;
 use Orkestra\Bundle\GuzzleBundle\Plugin\WsseAuthPlugin;
 use Orkestra\Bundle\GuzzleBundle\DataMapper\PropertyPathMapper;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Service base class
@@ -69,6 +69,11 @@ abstract class Service
     private $wsse = false;
 
     /**
+     * @var \Symfony\Component\EventDispatcher\EventDispatcher
+     */
+    private $eventDispatcher;
+
+    /**
      * Constructor.
      *
      * @param array $vars
@@ -76,14 +81,15 @@ abstract class Service
     public function __construct(array $vars = array())
     {
         $this->config = $this->prepareConfig($this->vars, $vars);
+        $this->eventDispatcher = new EventDispatcher();
     }
 
     /**
      * Prepare the config for Guzzle's client
      *
-     * @param array|null $config
-     * @param array|null $defaults
-     * @param array|null $required
+     * @param  array|null                                    $config
+     * @param  array|null                                    $defaults
+     * @param  array|null                                    $required
      * @return \Guzzle\Common\Collection
      * @throws \Guzzle\Service\Exception\ValidationException
      */
@@ -213,6 +219,37 @@ abstract class Service
         $this->description = json_decode(file_get_contents($description));
     }
 
+    public function setMetadata($metadata)
+    {
+        $this->metadata = unserialize(file_get_contents($metadata));
+    }
+
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    public function bindEvents()
+    {
+        $events = $this->metadata->getEvents();
+        if ($this->metadata instanceof ServiceMetadata && !empty($events)) {
+            foreach ($events as $event => $callbacks) {
+                foreach ($callbacks as $reference) {
+                    $parts = explode(':', $reference);
+
+                    if (get_class($this) === $parts[0]) {
+                        $instance = $this;
+                    } else {
+                        $refl = new \ReflectionClass($parts[0]);
+                        $instance = $refl->newInstance();
+                    }
+
+                    $this->eventDispatcher->addListener($event, array($instance, $parts[1]));
+                }
+            }
+        }
+    }
+
     /**
      * Method for creating authorization headers that may
      * have variables that were computed
@@ -230,8 +267,7 @@ abstract class Service
             }
         }
 
-        if (preg_match('/{.*}/', $string, $matches))
-        {
+        if (preg_match('/{.*}/', $string, $matches)) {
             throw new \Exception('These values are required: '.implode(', ', $matches));
         }
 
@@ -242,12 +278,12 @@ abstract class Service
      * Execute commands
      *
      * @param $commandName
-     * @param array $params
+     * @param  array $params
      * @return mixed
      */
     public function execute($name, array $params = array())
     {
-        $this->beforeExecute();
+        $this->eventDispatcher->dispatch('BeforeSend');
 
         $client = $this->getCommandClient($name);
 
@@ -255,12 +291,16 @@ abstract class Service
 
         $response = $client->execute($command);
 
+        if (is_object($response)) {
+            throw new \Exception('Unexpected content: '.(string) $response);
+        }
+
         return $this->executeResponse($name, $response);
     }
 
     private function getReference($name)
     {
-        return $this->description->commands->$name->reference;
+        return $this->description->operations->$name->reference;
     }
 
     private function getCommandClient($name)
@@ -327,7 +367,7 @@ abstract class Service
         }
 
         $refl = new \ReflectionClass($parts[0]);
-        $instance = $refl->newInstance();
+        $instance = $refl->newInstanceArgs(array($this->getResponse()));
 
         return $instance->$parts[1]();
     }
@@ -342,7 +382,7 @@ abstract class Service
             $responses[][$a['command']->getName()] = $a['command']->getResult();
         });
 
-        $this->beforeExecute();
+        $this->eventDispatcher->dispatch('BeforeSend');
 
         foreach ($batch as $command) {
 
@@ -369,10 +409,4 @@ abstract class Service
 
         return $results;
     }
-
-    /**
-     * @abstract
-     * @return mixed
-     */
-    abstract public function beforeExecute();
 }

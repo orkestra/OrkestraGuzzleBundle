@@ -18,7 +18,7 @@ class ServiceCacheWarmer extends CacheWarmer
     /**
      * Constructor.
      *
-     * @param array $services
+     * @param array         $services
      * @param ServiceLoader $serviceLoader
      */
     public function __construct(array $services, ServiceLoader $serviceLoader)
@@ -34,7 +34,7 @@ class ServiceCacheWarmer extends CacheWarmer
      */
     public function warmUp($cacheDir)
     {
-        $this->serviceLoader->load($this->services);
+        //$this->serviceLoader->load($this->services);
     }
 
     /**

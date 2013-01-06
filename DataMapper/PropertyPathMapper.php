@@ -14,12 +14,12 @@ class PropertyPathMapper
     private $errors = array();
 
     /**
-     * @param Object $entity Entity to bind data
-     * @param array $data Array of data to bind to object
+     * @param  Object    $entity Entity to bind data
+     * @param  array     $data   Array of data to bind to object
      * @return boolean
      * @throws Exception
      */
-    public function bind($entity, array $data)
+    public function bind($entity, array &$data)
     {
         if (is_object($entity)) {
             $reflection = new \ReflectionClass($entity);
@@ -30,8 +30,35 @@ class PropertyPathMapper
                     if (!$reflection->getMethod($setter)->isPublic()) {
                         throw new \ReflectionException(sprintf('Method "%s()" is not public in class "%s"', $setter, $reflection->name));
                     }
+                    try {
+                        $entity->$setter($value);
+                    } catch (\Exception $e) {
+                        $properties = $reflection->getMethod($setter)->getParameters();
+                        $property = $properties[0]->getClass();
+                        $o = $property->newInstance();
+                        $this->bind($o, $value);
+                        $entity->$setter($o);
+                    }
+                } else {
+                    $setter = 'add'.preg_replace('/s$/i', '', $this->camelize($key));
+                    if ($reflection->hasMethod($setter)) {
+                        $method = $reflection->getMethod($setter);
+                        if (!$method->isPublic()) {
+                            throw new \ReflectionException(sprintf('Method "%s()" is not public in class "%s"', $setter, $reflection->name));
+                        }
+                        if (!is_array($value)) {
+                            $value = array($value);
+                        }
 
-                    $entity->$setter($value);
+                        $properties = $method->getParameters();
+                        $property = $properties[0]->getClass();
+
+                        foreach ($value as $v) {
+                            $o = $property->newInstance();
+                            $this->bind($o, $v);
+                            $entity->$setter($o);
+                        }
+                    }
                 }
             }
         } else {
@@ -42,7 +69,7 @@ class PropertyPathMapper
     /**
      * Camelizes a given string.
      *
-     * @param  string $string Some string.
+     * @param string $string Some string.
      *
      * @return string The camelized version of the string.
      */

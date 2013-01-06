@@ -2,7 +2,6 @@
 
 namespace Orkestra\Bundle\GuzzleBundle\Generator\Dumper;
 
-
 /**
  * Json Dumper to dump service into a json file.
  *
@@ -18,7 +17,7 @@ class JsonGeneratorDumper
      */
     public function dump($commands)
     {
-        $dumpArray = array('types' => array(), 'commands' => array());
+        $dumpArray = array('types' => array(), 'operations' => array());
 
         foreach ($commands as $class => $command) {
             if (isset($command['Type'])) {
@@ -30,23 +29,22 @@ class JsonGeneratorDumper
                     $dumpArray['types'][$name]['pattern'] = $value->getPattern();
                 }
             }
-            foreach ($command['Command'] as $value)
-            {
+            foreach ($command['Command'] as $value) {
                 $name = $value->getName();
 
-                $dumpArray['commands'][$name] = array();
+                $dumpArray['operations'][$name] = array();
 
                 if (isset($command['Async'])) {
-                    $dumpArray['commands'][$name]['async'] = true;
+                    $dumpArray['operations'][$name]['async'] = true;
                 }
 
-                $dumpArray['commands'][$name]['reference'] = $class;
+                $dumpArray['operations'][$name]['reference'] = $class;
 
-                $dumpArray['commands'][$name]['uri'] = $value->getUri();
+                $dumpArray['operations'][$name]['uri'] = $value->getUri();
 
-                $dumpArray['commands'][$name]['method'] = $value->getMethod();
+                $dumpArray['operations'][$name]['httpMethod'] = $value->getMethod();
 
-                $dumpArray['commands'][$name]['params'] = array();
+                $dumpArray['operations'][$name]['parameters'] = array();
 
                 if (isset($command['Param'])) {
                     foreach ($command['Param'] as $param) {
@@ -84,7 +82,7 @@ class JsonGeneratorDumper
                             $paramArray['filters'] = $param->getFilters();
                         }
 
-                        $dumpArray['commands'][$name]['params'][$paramName] = $paramArray;
+                        $dumpArray['operations'][$name]['parameters'][$paramName] = $paramArray;
                     }
                 }
             }
