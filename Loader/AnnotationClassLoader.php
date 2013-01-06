@@ -52,7 +52,6 @@ class AnnotationClassLoader implements LoaderInterface
             throw new \InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
         }
 
-
         $baseClass = new \ReflectionClass($class);
 
         $commands = array();
@@ -95,8 +94,7 @@ class AnnotationClassLoader implements LoaderInterface
                 foreach ($annotations as $annotation) {
                     $annotationName = explode('\\', get_class($annotation));
                     $annotationName = array_pop($annotationName);
-                    if (in_array($annotationName, $this->events))
-                    {
+                    if (in_array($annotationName, $this->events)) {
                         $serviceMeta->addEvent($name, $annotationName);
                         continue;
                     }
