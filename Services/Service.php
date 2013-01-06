@@ -4,9 +4,9 @@ namespace Orkestra\Bundle\GuzzleBundle\Services;
 
 use Guzzle\Common\Collection;
 use Guzzle\Service\Exception\ValidationException;
-use Guzzle\Service\Command\BatchCommandTransfer;
-use Guzzle\Http\Plugin\AsyncPlugin;
-use Guzzle\Http\Plugin\OauthPlugin;
+use Guzzle\Batch\BatchCommandTransfer;
+use Guzzle\Plugin\Async\AsyncPlugin;
+use Guzzle\Plugin\Oauth\OauthPlugin;
 use Orkestra\Bundle\GuzzleBundle\Plugin\WsseAuthPlugin;
 use Orkestra\Bundle\GuzzleBundle\DataMapper\PropertyPathMapper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -291,12 +291,16 @@ abstract class Service
 
         $response = $client->execute($command);
 
+        if (is_object($response)) {
+            throw new \Exception('Unexpected content: '.(string) $response);
+        }
+
         return $this->executeResponse($name, $response);
     }
 
     private function getReference($name)
     {
-        return $this->description->commands->$name->reference;
+        return $this->description->operations->$name->reference;
     }
 
     private function getCommandClient($name)
@@ -363,7 +367,7 @@ abstract class Service
         }
 
         $refl = new \ReflectionClass($parts[0]);
-        $instance = $refl->newInstance();
+        $instance = $refl->newInstanceArgs(array($this->getResponse()));
 
         return $instance->$parts[1]();
     }

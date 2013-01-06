@@ -6,8 +6,8 @@ use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Orkestra\Bundle\GuzzleBundle\Generator\Dumper\JsonGeneratorDumper;
-use Guzzle\Http\Plugin\OauthPlugin;
-use Guzzle\Http\Plugin\LogPlugin;
+use Guzzle\Plugin\Cookie\OauthPlugin;
+use Guzzle\Plugin\Cookie\LogPlugin;
 use Guzzle\Common\Log\MonologLogAdapter;
 use Guzzle\Service\Client;
 use Orkestra\Bundle\GuzzleBundle\Plugin\WsseAuthPlugin;
@@ -82,7 +82,7 @@ class ServiceLoader
 
         $client = Client::factory($serviceInstance->getConfig());
 
-        $cookiePlugin = new \Guzzle\Http\Plugin\CookiePlugin(new \Guzzle\Http\CookieJar\ArrayCookieJar());
+        $cookiePlugin = new \Guzzle\Plugin\Cookie\CookiePlugin(new \Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar());
         $client->addSubscriber($cookiePlugin);
 
         if (isset($options['oauth']) && !empty($options['oauth'])) {
@@ -102,9 +102,10 @@ class ServiceLoader
         }
 
         $serviceInstance->setClient($client);
-        $serviceInstance->setDescription($cache);
+        $serviceInstance->setDescription((string) $cache);
         $serviceInstance->setMetadata($metaCache);
         $serviceInstance->bindEvents();
+
         return $serviceInstance;
     }
 

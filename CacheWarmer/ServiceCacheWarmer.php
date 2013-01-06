@@ -34,7 +34,7 @@ class ServiceCacheWarmer extends CacheWarmer
      */
     public function warmUp($cacheDir)
     {
-        $this->serviceLoader->load($this->services);
+        //$this->serviceLoader->load($this->services);
     }
 
     /**
