@@ -2,7 +2,6 @@
 
 namespace Orkestra\Bundle\GuzzleBundle\Services;
 
-
 /**
  * Service metadata
  *
@@ -21,6 +20,7 @@ class ServiceMetadata
     public function addEvent($callback, $event)
     {
         $this->events[$event][] = $callback;
+
         return $this;
     }
 
@@ -32,6 +32,7 @@ class ServiceMetadata
     public function setEvents(array $events)
     {
         $this->events = $events;
+
         return $this;
     }
 
