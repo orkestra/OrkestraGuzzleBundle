@@ -72,7 +72,7 @@ class AcmeService extends AbstractService
     }
 
     /**
-     * @Command(name="acme_user_id", method="GET", uri="/users/{{user_id}}")
+     * @Command(name="acme_user_id", method="GET", uri="/users/{user_id}")
      * @Doc("Find user by id")
      * @Param(name="user_id", type="integer", required="true")
      */
