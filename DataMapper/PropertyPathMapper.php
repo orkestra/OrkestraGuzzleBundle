@@ -30,15 +30,16 @@ class PropertyPathMapper
                     if (!$reflection->getMethod($setter)->isPublic()) {
                         throw new \ReflectionException(sprintf('Method "%s()" is not public in class "%s"', $setter, $reflection->name));
                     }
-                    try {
-                        $entity->$setter($value);
-                    } catch (\Exception $e) {
-                        $properties = $reflection->getMethod($setter)->getParameters();
-                        $property = $properties[0]->getClass();
+                    
+                    $properties = $reflection->getMethod($setter)->getParameters();
+
+                    if (!is_null($property = $properties[0]->getClass())) {
                         $o = $property->newInstance();
                         $this->bind($o, $value);
-                        $entity->$setter($o);
+                        $value = $o;
                     }
+
+                    $entity->$setter($value);
                 } else {
                     $setter = 'add'.preg_replace('/s$/i', '', $this->camelize($key));
                     if ($reflection->hasMethod($setter)) {
