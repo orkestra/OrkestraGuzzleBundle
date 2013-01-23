@@ -109,7 +109,7 @@ class AcmeController extends Controller
         //Get list of users
         $users = $guzzle->getService('AcmeService')->execute('acme_users');
         //Get a user by id
-        $oneUser = $guzzle->getService('AcmeService')->excute('acme_user_id', array('user_id' => 1));
+        $oneUser = $guzzle->getService('AcmeService')->execute('acme_user_id', array('user_id' => 1));
     }
 }
 ```
