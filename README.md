@@ -65,6 +65,7 @@ class AcmeService extends AbstractService
     /**
      * @Command(name="acme_users", method="GET", uri="/users")
      * @Doc("Get list of Acme users")
+     * @Param(name="command.response_processing", type="string", required="false", default="raw")
      */
     public function acmeUsersCommand()
     {
@@ -75,6 +76,7 @@ class AcmeService extends AbstractService
      * @Command(name="acme_user_id", method="GET", uri="/users/{user_id}")
      * @Doc("Find user by id")
      * @Param(name="user_id", type="integer", required="true")
+     * @Param(name="command.response_processing", type="string", required="false", default="raw")
      */
     public function acmeUserByIdCommand()
     {
